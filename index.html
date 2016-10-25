@@ -15,7 +15,6 @@
     <!-- Bootstrap Core CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://openlayers.org/en/v3.19.0/css/ol.css" />
-<link rel="stylesheet" href="http://rawgit.com/walkermatt/ol3-layerswitcher/master/src/ol3-layerswitcher.css" />
     <!-- Custom CSS -->
     <style>
     body {
@@ -37,7 +36,6 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://openlayers.org/en/v3.19.0/build/ol.js"></script>
-<script src="http://rawgit.com/walkermatt/ol3-layerswitcher/master/src/ol3-layerswitcher.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/2.2.1/proj4.js"></script>
 <script src="epsg.js"></script>
 <script type="text/javascript">
@@ -161,8 +159,6 @@ function init () {
     var layerSwitcher = new ol.control.LayerSwitcher({
         tipLabel: 'Legenda' // Optional label for button
     });
-    map_gj.addControl(layerSwitcher);
-    //map_gj.getView().fit(targetExtent, map_gj.getSize());
 }
 
 
