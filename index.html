@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>CERTIFICATI</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://openlayers.org/en/v3.19.0/css/ol.css" />
+<link rel="stylesheet" href="http://rawgit.com/walkermatt/ol3-layerswitcher/master/src/ol3-layerswitcher.css" />
+    <!-- Custom CSS -->
+    <style>
+    body {
+        padding-top: 70px;
+        /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    }
+
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- jQuery Version 1.11.1 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://openlayers.org/en/v3.19.0/build/ol.js"></script>
+<script src="http://rawgit.com/walkermatt/ol3-layerswitcher/master/src/ol3-layerswitcher.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/2.2.1/proj4.js"></script>
+<script src="epsg.js"></script>
+<script type="text/javascript">
+
+var rilevoCollection, rilievoOverlay;
+var poligonoFeatures, poligonoOverlay;
+
+ol.proj.setProj4(proj4);
+
+var targetExtent = [1716014, 5023919, 1737137, 5038662];
+
+var targetProjection;
+
+var localProjection = "EPSG:3857";
+
+var GEOJson_convertitore = new ol.format.GeoJSON({
+      defaultDataProjection: localProjection
+    });
+
+$(document).ready(function(){
+
+
+});
+
+function init () {
+
+    document.getElementById("submit").onclick = function fun() {
+        console.log(rilievoOverlay.getSource().getExtent());
+        try{
+            var geojsonObject = JSON.parse($("#geojson_txt").val());
+        }
+        catch(err){
+            alert(err)
+            return
+        }
+        var targetProjection_ = GEOJson_convertitore.readProjection(geojsonObject);
+
+        CRS_code = geojsonObject["crs"]["properties"]["name"].split(':');
+        EPSG_code = "EPSG:"+CRS_code[CRS_code.length-1];
+
+        var newProjection = new ol.proj.Projection({
+          code: EPSG_code
+        });
+
+        ol.proj.addProjection(newProjection);
+
+       console.log(proj4.defs(EPSG_code));
+       console.log(newProjection);
+
+        //ol.proj.addProjection(targetProjection);
+        var rilevoFeatures = GEOJson_convertitore.readFeatures(geojsonObject, {dataProjection: EPSG_code,featureProjection: localProjection});
+        //rilevoCollection = new ol.Collection(rilevoFeatures);
+
+        /*var new_source = new ol.source.Vector({
+        features: rilevoCollection 
+        });
+
+        var geojson_extent = new_source.getExtent();*/
+
+        rilievoOverlay.getSource().clear();
+        rilievoOverlay.getSource().once('change',function(e){
+            if(rilievoOverlay.getSource().getState() === 'ready') { 
+                var features = rilievoOverlay.getSource().getFeatures();
+                if(features.length>0) {
+                    var geojson_extent = rilievoOverlay.getSource().getExtent();
+                    map_gj.getView().fit(geojson_extent, map_gj.getSize());
+                }
+            }
+        });
+        rilievoOverlay.getSource().addFeatures(rilevoFeatures);
+    }
+    
+     rilevoCollection = new ol.Collection();
+      
+      rilievoOverlay = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: rilevoCollection,
+            projection: localProjection
+        }),
+        title: 'rilievo',
+        style: new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#ff0000',
+            width: 3
+          }),
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: '#ff0000'
+            })
+          })
+        })
+      });
+ 
+
+    map_gj = new ol.Map({
+      //interactions: ol.interaction.defaults().extend([new app.Drag()]),
+      layers: [
+
+            new ol.layer.Tile({
+              source: new ol.source.OSM()
+            }),
+            rilievoOverlay
+      ],
+      controls: ol.control.defaults().extend([
+        //new ol.control.ScaleLine(),
+        new ol.control.MousePosition(),
+        new ol.control.OverviewMap()
+      ]),
+      target: 'map',
+      view: new ol.View({
+        projection: localProjection,
+        center: [11,45],//[70000,1700000],
+        zoom: 2
+      })
+    });
+
+    var layerSwitcher = new ol.control.LayerSwitcher({
+        tipLabel: 'Legenda' // Optional label for button
+    });
+    map_gj.addControl(layerSwitcher);
+    //map_gj.getView().fit(targetExtent, map_gj.getSize());
+}
+
+
+</script>
+</head>
+
+<body onload="init()">
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div style="height:600px;" id="map"></div>
+        </div>
+        <div class="col-md-4">
+            <div class="form">
+                <button type="submit" id="submit" class="btn btn-default">Load geojson in map</button>
+                <textarea id="geojson_txt" class="form-control" rows="25" placeholder="Paste geojson code in here ...."></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>
