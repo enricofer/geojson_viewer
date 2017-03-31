@@ -3255,7 +3255,6 @@ proj4.defs("EPSG:29385", "+proj=tmerc +lat_0=-22 +lon_0=25 +k=1 +x_0=0 +y_0=0 +a
 proj4.defs("EPSG:29635", "+proj=utm +zone=35 +a=6378249.2 +b=6356515 +units=m +no_defs");
 proj4.defs("EPSG:29636", "+proj=utm +zone=36 +a=6378249.2 +b=6356515 +units=m +no_defs");
 proj4.defs("EPSG:29700", "+proj=omerc +lat_0=-18.9 +lonc=44.10000000000001 +alpha=18.9 +k=0.9995000000000001 +x_0=400000 +y_0=800000 +gamma=18.9 +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +pm=paris +units=m +no_defs");
-proj4.defs("EPSG:29701", "");
 proj4.defs("EPSG:29702", "+proj=omerc +lat_0=-18.9 +lonc=44.10000000000001 +alpha=18.9 +k=0.9995000000000001 +x_0=400000 +y_0=800000 +gamma=18.9 +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +pm=paris +units=m +no_defs");
 proj4.defs("EPSG:29738", "+proj=utm +zone=38 +south +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +units=m +no_defs");
 proj4.defs("EPSG:29739", "+proj=utm +zone=39 +south +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +units=m +no_defs");
